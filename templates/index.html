@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Chatbot Dark</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .chat-container {
+            height: 60vh;
+            background-color: #1e293b;
+        }
+
+        .container {
+            max-height: 120vh;
+            width: 90%;
+            max-width: 60%;
+        }
+
+        .message {
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 20px 20px 0 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-message {
+            background-color: #334155;
+            color: #e2e8f0;
+            border-radius: 20px 20px 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-message a {
+            color: #60a5fa;
+            text-decoration: underline;
+            word-break: break-all;
+        }
+
+        .bot-message a:hover {
+            color: #93c5fd;
+        }
+
+        .typing-indicator {
+            display: none;
+        }
+
+        .typing-indicator span {
+            animation: blink 1s infinite;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+
+        .input-area {
+            background-color: #1e293b;
+            border-top: 1px solid #334155;
+        }
+
+        .custom-input {
+            background-color: #334155;
+            color: #e2e8f0;
+            border: 1px solid #4b5563;
+        }
+
+        .custom-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .custom-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            20% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="glass-effect rounded-lg shadow-xl">
+            <!-- Header -->
+            <div class="chat-header text-white p-4 rounded-t-lg flex flex-col items-center justify-center text-center">
+                <h1 class="text-xl font-bold mb-1">E-commerce Shopping Assistant</h1>
+                <p class="text-sm opacity-90">Ask me anything about our products!</p>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container overflow-y-auto p-4" id="chatContainer">
+                <!-- Welcome Message -->
+                <div class="flex mb-4">
+                    <div class="bot-message p-3 message">
+                        👋 Hi! I'm your shopping assistant. How can I help you today?
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator flex mb-4" id="typingIndicator">
+                    <div class="bot-message p-3 message">
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area p-4 rounded-b-lg">
+                <form id="chatForm" class="flex gap-2">
+                    <input type="text" id="userInput"
+                        class="custom-input flex-1 p-3 text-base rounded-lg focus:outline-none"
+                        placeholder="Give Product Description and ask your quiries here...." required>
+                    <button type="submit"
+                        class="send-button text-white px-6 py-2 rounded-lg font-semibold">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript remains the same
+        const chatContainer = document.getElementById('chatContainer');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex mb-4 ${isUser ? 'justify-end' : ''}`;
+
+            const messageContent = document.createElement('div');
+            messageContent.className = `message p-4 ${isUser ? 'user-message' : 'bot-message'}`;
+
+            if (isUser) {
+                messageContent.textContent = message;
+            } else {
+                messageContent.innerHTML = message;
+                messageContent.querySelectorAll('a').forEach(link => {
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                });
+            }
+
+            messageDiv.appendChild(messageContent);
+            chatContainer.insertBefore(messageDiv, typingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'flex';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message }),
+                });
+
+                const data = await response.json();
+                hideTypingIndicator();
+                addMessage(data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                addMessage('Sorry, I encountered an error. Please try again.');
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                chatForm.requestSubmit();
+            }
+        });
+    </script>
+</body>
+</html>
