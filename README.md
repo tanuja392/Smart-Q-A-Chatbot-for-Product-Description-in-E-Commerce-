@@ -22,6 +22,8 @@ An intelligent chatbot built with **Python (Flask)** and **Gemini API**, designe
 | HTML, Tailwind CSS | Python (Flask) | Gemini (Google AI) | JSON (for product data) |
 
 ---
+## Chatbot Interface
+![Image](https://github.com/user-attachments/assets/c95a9030-6bdb-4839-9fc4-10b198539efc)
 ## ⚙️ Setup Instructions
 
 1. **Clone the repository**
